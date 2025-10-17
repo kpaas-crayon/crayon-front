@@ -1,6 +1,12 @@
 {
+  "/_not-found/page": "app/_not-found/page.js",
+  "/favicon.ico/route": "app/favicon.ico/route.js",
   "/attendance/page": "app/attendance/page.js",
   "/evaluation/page": "app/evaluation/page.js",
+  "/documents/page": "app/documents/page.js",
+  "/grades/page": "app/grades/page.js",
   "/page": "app/page.js",
-  "/students/page": "app/students/page.js"
+  "/records/page": "app/records/page.js",
+  "/students/page": "app/students/page.js",
+  "/attendance/[id]/page": "app/attendance/[id]/page.js"
 }
