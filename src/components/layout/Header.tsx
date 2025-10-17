@@ -4,39 +4,25 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { NAVIGATION_ITEMS } from '@/constants';
-import { User } from '@/types';
+import { useAuth } from '@/contexts/AuthContext';
+import LoginButton from '@/components/auth/LoginButton';
+import UserProfile from '@/components/auth/UserProfile';
 import MobileMenu from './MobileMenu';
-
-interface HeaderProps {
-  user?: User;
-}
 
 /**
  * 상단 네비게이션 바 컴포넌트
  * 
  * 기능:
  * - 로고 및 서비스명 표시
- * - 메인 네비게이션 메뉴
- * - 사용자 정보 및 알림
+ * - 메인 네비게이션 메뉴 (로그인 시에만 표시)
+ * - 사용자 정보 및 알림 (로그인 시)
+ * - 로그인/로그아웃 버튼 (미로그인 시)
  * - 반응형 디자인 지원
- * 
- * @param user - 현재 로그인한 사용자 정보
  */
-const Header: React.FC<HeaderProps> = ({ user }) => {
+const Header: React.FC = () => {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  // 기본 사용자 정보 (개발용)
-  const defaultUser: User = {
-    id: '1',
-    name: '김민준',
-    email: 'teacher@school.edu',
-    role: 'teacher',
-    school: '서울초등학교',
-    avatar: 'https://placehold.co/100x100/1ccf60/ffffff?text=교',
-  };
-
-  const currentUser = user || defaultUser;
+  const { isAuthenticated, isLoading } = useAuth();
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -57,41 +43,50 @@ const Header: React.FC<HeaderProps> = ({ user }) => {
               />
               <h1 className="text-lg font-bold">크레파스 - AI도우미</h1>
             </Link>
-            {/* 네비게이션 메뉴 */}
-            <nav className="hidden md:flex items-center space-x-6">
-              {NAVIGATION_ITEMS.map((item) => {
-                const isActive = pathname === item.href;
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className={`text-sm font-semibold ${
-                      isActive
-                        ? 'text-primary-500 border-b-2 border-primary-500 pb-1'
-                        : 'text-gray-600 hover:text-primary-500'
-                    }`}
-                  >
-                    {item.title}
-                  </Link>
-                );
-              })}
-            </nav>
+            
+            {/* 네비게이션 메뉴 (로그인 시에만 표시) */}
+            {isAuthenticated && (
+              <nav className="hidden md:flex items-center space-x-6">
+                {NAVIGATION_ITEMS.map((item) => {
+                  const isActive = pathname === item.href;
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className={`text-sm font-semibold ${
+                        isActive
+                          ? 'text-primary-500 border-b-2 border-primary-500 pb-1'
+                          : 'text-gray-600 hover:text-primary-500'
+                      }`}
+                    >
+                      {item.title}
+                    </Link>
+                  );
+                })}
+              </nav>
+            )}
           </div>
-          {/* 사용자 정보 및 알림 */}
+          
+          {/* 우측 영역 - 로그인 상태에 따라 다른 UI 표시 */}
           <div className="flex items-center space-x-4">
-            <button className="text-gray-500 hover:text-gray-800">
-              <i className="fas fa-bell"></i>
-            </button>
-            <div className="flex items-center">
-              <img
-                className="h-9 w-9 rounded-full object-cover"
-                src="/images/cute-character.svg"
-                alt="User avatar"
-              />
-              <div className="ml-2 hidden md:block">
-                <p className="text-sm font-semibold">{currentUser.name} 선생님</p>
+            {isLoading ? (
+              // 로딩 중
+              <div className="flex items-center space-x-2">
+                <div className="w-4 h-4 border-2 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
+                <span className="text-sm text-gray-600">로딩 중...</span>
               </div>
-            </div>
+            ) : isAuthenticated ? (
+              // 로그인된 상태
+              <>
+                <button className="text-gray-500 hover:text-gray-800 transition-colors">
+                  <i className="fas fa-bell"></i>
+                </button>
+                <UserProfile />
+              </>
+            ) : (
+              // 로그인되지 않은 상태
+              <LoginButton />
+            )}
           </div>
         </div>
       </div>
