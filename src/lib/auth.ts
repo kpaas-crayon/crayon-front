@@ -33,6 +33,16 @@ export const authOptions = {
      */
     async jwt({ token, account, profile }: { token: Record<string, unknown>; account: Record<string, unknown> | null; profile?: Record<string, unknown> }) {
       if (account && profile) {
+        // 백엔드가 없을 때 모의 데이터 사용 (개발용)
+        if (!process.env.NEXT_PUBLIC_API_URL) {
+          console.log('🔧 개발 모드: 모의 데이터 사용');
+          token.backendToken = `mock_backend_token_${Date.now()}`;
+          token.userId = `mock_user_${Date.now()}`;
+          token.googleAccessToken = account.access_token;
+          token.googleRefreshToken = account.refresh_token;
+          return token;
+        }
+
         // 구글 토큰을 Spring Boot 서버로 전송하여 백엔드 토큰 획득
         try {
           const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/google`, {
@@ -57,6 +67,11 @@ export const authOptions = {
           }
         } catch (error) {
           console.error('백엔드 인증 실패:', error);
+          // 백엔드 실패 시에도 모의 데이터로 로그인 허용
+          token.backendToken = `mock_backend_token_${Date.now()}`;
+          token.userId = `mock_user_${Date.now()}`;
+          token.googleAccessToken = account.access_token;
+          token.googleRefreshToken = account.refresh_token;
         }
       }
       

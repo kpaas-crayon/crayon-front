@@ -44,7 +44,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [googleAccessToken, setGoogleAccessToken] = useState<string | null>(null);
 
   const isLoading = status === 'loading';
-  const isAuthenticated = !!session && !!user;
+  // 🔧 개발 모드에서는 사용자만 있으면 인증된 상태로 처리
+  const isAuthenticated = process.env.NODE_ENV === 'development' ? !!user : (!!session && !!user);
 
   // 세션 변경 시 사용자 정보 업데이트
   useEffect(() => {
@@ -65,9 +66,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setGoogleAccessToken(session.googleAccessToken as string);
       }
     } else {
-      setUser(null);
-      setBackendToken(null);
-      setGoogleAccessToken(null);
+      // 🔧 개발 모드: 구글 로그인 우회를 위한 임시 사용자 설정
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🔧 개발 모드: 구글 로그인 우회 - 임시 사용자로 로그인');
+        setUser({
+          id: 'dev_user_123',
+          name: '개발자 테스트',
+          email: 'test@example.com',
+          image: undefined,
+          role: 'teacher',
+        });
+        setBackendToken('dev_backend_token_123');
+        setGoogleAccessToken('dev_google_token_123');
+      } else {
+        setUser(null);
+        setBackendToken(null);
+        setGoogleAccessToken(null);
+      }
     }
   }, [session]);
 

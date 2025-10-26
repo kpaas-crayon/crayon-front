@@ -27,10 +27,43 @@ export default function GradesPage() {
             </svg>
           </div>
           <h3 className="text-lg font-semibold text-gray-900 mb-2">성적 관리 시스템</h3>
-          <p className="text-gray-600 mb-4">곧 출시 예정입니다</p>
-          <button className="bg-primary-500 text-white px-6 py-2 rounded-lg hover:bg-primary-600 transition-colors">
-            알림 신청
-          </button>
+          <p className="text-gray-600 mb-6">곧 출시 예정입니다</p>
+          
+          {/* 🔧 개발 모드: 테스트용 네비게이션 버튼들 */}
+          <div className="space-y-3">
+            <div className="text-sm text-gray-500 mb-4">🔧 개발 모드 - 테스트용 네비게이션</div>
+            <div className="grid grid-cols-2 gap-3">
+              <Link 
+                href="/students" 
+                className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors text-sm"
+              >
+                학생 관리
+              </Link>
+              <Link 
+                href="/attendance" 
+                className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors text-sm"
+              >
+                출석 관리
+              </Link>
+              <Link 
+                href="/documents" 
+                className="bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-purple-600 transition-colors text-sm"
+              >
+                문서 관리
+              </Link>
+              <Link 
+                href="/records" 
+                className="bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors text-sm"
+              >
+                기록 관리
+              </Link>
+            </div>
+            <div className="pt-4 border-t border-gray-200">
+              <button className="bg-primary-500 text-white px-6 py-2 rounded-lg hover:bg-primary-600 transition-colors">
+                알림 신청
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </MainLayout>
