@@ -12,28 +12,34 @@
 
 const API_BASE = process.env.API_BASE_URL!;
 
-export async function GET(_: Request, ctx: { params: { path: string[] } }) {
-  return forward('GET', ctx.params.path, _);
+export async function GET(_: Request, { params }: { params: Promise<{ path: string[] }> }) {
+  const resolvedParams = await params;
+  return forward('GET', resolvedParams.path, _);
 }
 
-export async function POST(req: Request, ctx: { params: { path: string[] } }) {
-  return forward('POST', ctx.params.path, req);
+export async function POST(req: Request, { params }: { params: Promise<{ path: string[] }> }) {
+  const resolvedParams = await params;
+  return forward('POST', resolvedParams.path, req);
 }
 
-export async function PUT(req: Request, ctx: { params: { path: string[] } }) {
-  return forward('PUT', ctx.params.path, req);
+export async function PUT(req: Request, { params }: { params: Promise<{ path: string[] }> }) {
+  const resolvedParams = await params;
+  return forward('PUT', resolvedParams.path, req);
 }
 
-export async function PATCH(req: Request, ctx: { params: { path: string[] } }) {
-  return forward('PATCH', ctx.params.path, req);
+export async function PATCH(req: Request, { params }: { params: Promise<{ path: string[] }> }) {
+  const resolvedParams = await params;
+  return forward('PATCH', resolvedParams.path, req);
 }
 
-export async function DELETE(req: Request, ctx: { params: { path: string[] } }) {
-  return forward('DELETE', ctx.params.path, req);
+export async function DELETE(req: Request, { params }: { params: Promise<{ path: string[] }> }) {
+  const resolvedParams = await params;
+  return forward('DELETE', resolvedParams.path, req);
 }
 
-export async function OPTIONS(req: Request, ctx: { params: { path: string[] } }) {
-  return forward('OPTIONS', ctx.params.path, req);
+export async function OPTIONS(req: Request, { params }: { params: Promise<{ path: string[] }> }) {
+  const resolvedParams = await params;
+  return forward('OPTIONS', resolvedParams.path, req);
 }
 
 /**
