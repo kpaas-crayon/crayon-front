@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import MainLayout from '@/components/layout/MainLayout';
 
+
 // 생기부 템플릿 타입 정의
 interface RecordTemplate {
   id: string;

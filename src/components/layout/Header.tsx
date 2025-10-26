@@ -44,8 +44,8 @@ const Header: React.FC = () => {
               <h1 className="text-lg font-bold">크레파스 - AI도우미</h1>
             </Link>
             
-            {/* 네비게이션 메뉴 (로그인 시에만 표시) */}
-            {isAuthenticated && (
+            {/* 네비게이션 메뉴 (로그인 시 또는 개발 모드에서 표시) */}
+            {(isAuthenticated || process.env.NODE_ENV === 'development') && (
               <nav className="hidden md:flex items-center space-x-6">
                 {NAVIGATION_ITEMS.map((item) => {
                   const isActive = pathname === item.href;
@@ -75,8 +75,8 @@ const Header: React.FC = () => {
                 <div className="w-4 h-4 border-2 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
                 <span className="text-sm text-gray-600">로딩 중...</span>
               </div>
-            ) : isAuthenticated ? (
-              // 로그인된 상태
+            ) : (isAuthenticated || process.env.NODE_ENV === 'development') ? (
+              // 로그인된 상태 또는 개발 모드
               <>
                 <button className="text-gray-500 hover:text-gray-800 transition-colors">
                   <i className="fas fa-bell"></i>

@@ -42,8 +42,8 @@ const MainLayout: React.FC<MainLayoutProps> = ({
           {children}
         </div>
 
-        {/* 우측 사이드바 - 로그인 시에만 표시 */}
-        {isAuthenticated && showSidebar && <Sidebar />}
+        {/* 우측 사이드바 - 로그인 시 또는 개발 모드에서 표시 */}
+        {(isAuthenticated || process.env.NODE_ENV === 'development') && showSidebar && <Sidebar />}
       </div>
     </div>
   );
