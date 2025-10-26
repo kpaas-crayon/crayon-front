@@ -17,7 +17,7 @@ const getDefaultHeaders = () => ({
 /**
  * GET 요청
  */
-export async function apiGet<T = any>(endpoint: string): Promise<T> {
+export async function apiGet<T = unknown>(endpoint: string): Promise<T> {
   const response = await fetch(`${API_BASE}/${endpoint}`, {
     method: 'GET',
     headers: getDefaultHeaders(),
@@ -33,7 +33,7 @@ export async function apiGet<T = any>(endpoint: string): Promise<T> {
 /**
  * POST 요청
  */
-export async function apiPost<T = any>(endpoint: string, data?: any): Promise<T> {
+export async function apiPost<T = unknown>(endpoint: string, data?: unknown): Promise<T> {
   const response = await fetch(`${API_BASE}/${endpoint}`, {
     method: 'POST',
     headers: getDefaultHeaders(),
@@ -50,7 +50,7 @@ export async function apiPost<T = any>(endpoint: string, data?: any): Promise<T>
 /**
  * PUT 요청
  */
-export async function apiPut<T = any>(endpoint: string, data?: any): Promise<T> {
+export async function apiPut<T = unknown>(endpoint: string, data?: unknown): Promise<T> {
   const response = await fetch(`${API_BASE}/${endpoint}`, {
     method: 'PUT',
     headers: getDefaultHeaders(),
@@ -67,7 +67,7 @@ export async function apiPut<T = any>(endpoint: string, data?: any): Promise<T> 
 /**
  * PATCH 요청
  */
-export async function apiPatch<T = any>(endpoint: string, data?: any): Promise<T> {
+export async function apiPatch<T = unknown>(endpoint: string, data?: unknown): Promise<T> {
   const response = await fetch(`${API_BASE}/${endpoint}`, {
     method: 'PATCH',
     headers: getDefaultHeaders(),
@@ -84,7 +84,7 @@ export async function apiPatch<T = any>(endpoint: string, data?: any): Promise<T
 /**
  * DELETE 요청
  */
-export async function apiDelete<T = any>(endpoint: string): Promise<T> {
+export async function apiDelete<T = unknown>(endpoint: string): Promise<T> {
   const response = await fetch(`${API_BASE}/${endpoint}`, {
     method: 'DELETE',
     headers: getDefaultHeaders(),
@@ -100,13 +100,17 @@ export async function apiDelete<T = any>(endpoint: string): Promise<T> {
 /**
  * 파일 업로드 요청
  */
-export async function apiUpload<T = any>(endpoint: string, file: File, additionalData?: Record<string, any>): Promise<T> {
+export async function apiUpload<T = unknown>(endpoint: string, file: File, additionalData?: Record<string, unknown>): Promise<T> {
   const formData = new FormData();
   formData.append('file', file);
   
   if (additionalData) {
     Object.entries(additionalData).forEach(([key, value]) => {
-      formData.append(key, value);
+      if (typeof value === 'string' || value instanceof Blob) {
+        formData.append(key, value);
+      } else {
+        formData.append(key, String(value));
+      }
     });
   }
 
@@ -132,16 +136,16 @@ export async function generateRecordContent(templateId: string, studentId: strin
   message?: string;
 }> {
   try {
-    const response = await apiPost('ai/generate-record', {
-      templateId,
-      studentId,
-      prompt,
-    });
+      const response = await apiPost<{ content: string }>('ai/generate-record', {
+        templateId,
+        studentId,
+        prompt,
+      });
 
-    return {
-      content: response.content,
-      status: 'success',
-    };
+      return {
+        content: response.content,
+        status: 'success' as const,
+      };
   } catch (error) {
     return {
       content: '',
@@ -161,7 +165,13 @@ export async function getStudents(): Promise<Array<{
   grade: number;
   class: number;
 }>> {
-  return apiGet('students');
+  return apiGet<Array<{
+    id: string;
+    name: string;
+    studentNumber: string;
+    grade: number;
+    class: number;
+  }>>('students');
 }
 
 /**
@@ -176,7 +186,15 @@ export async function getRecordTemplates(): Promise<Array<{
   popularity: number;
   recentlyUsed: boolean;
 }>> {
-  return apiGet('records/templates');
+  return apiGet<Array<{
+    id: string;
+    title: string;
+    description: string;
+    category: string;
+    features: string[];
+    popularity: number;
+    recentlyUsed: boolean;
+  }>>('records/templates');
 }
 
 /**
@@ -190,5 +208,8 @@ export async function saveFinalResult(data: {
   id: string;
   success: boolean;
 }> {
-  return apiPost('records/save', data);
+  return apiPost<{
+    id: string;
+    success: boolean;
+  }>('records/save', data);
 }
